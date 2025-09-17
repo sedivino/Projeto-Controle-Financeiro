@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinanceControl - Controle Financeiro Pessoal</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-piggy-bank"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>FinanceControl</h1>
+                        <p>Controle Financeiro Pessoal</p>
+                    </div>
+                </div>
+                <div class="date-info">
+                    <i class="fas fa-calendar"></i>
+                    <span id="current-month"></span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Cards de Resumo -->
+            <section class="summary-cards">
+                <div class="card card-receitas">
+                    <div class="card-header">
+                        <h3>Receitas</h3>
+                        <i class="fas fa-trending-up"></i>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-value" id="total-receitas">R$ 0,00</div>
+                        <p class="card-subtitle" id="count-receitas">0 transações</p>
+                    </div>
+                </div>
+
+                <div class="card card-despesas">
+                    <div class="card-header">
+                        <h3>Despesas</h3>
+                        <i class="fas fa-trending-down"></i>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-value" id="total-despesas">R$ 0,00</div>
+                        <p class="card-subtitle" id="count-despesas">0 transações</p>
+                    </div>
+                </div>
+
+                <div class="card card-saldo">
+                    <div class="card-header">
+                        <h3>Saldo</h3>
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-value" id="saldo-total">R$ 0,00</div>
+                        <p class="card-subtitle" id="saldo-status">Neutro</p>
+                    </div>
+                </div>
+
+                <div class="card card-orcamento">
+                    <div class="card-header">
+                        <h3>Orçamento</h3>
+                        <i class="fas fa-target"></i>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-value" id="total-orcamento">R$ 0,00</div>
+                        <p class="card-subtitle" id="orcamento-usado">0% usado</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Navegação por Tabs -->
+            <section class="tabs-section">
+                <div class="tabs-nav">
+                    <button class="tab-btn active" data-tab="dashboard">Dashboard</button>
+                    <button class="tab-btn" data-tab="transacoes">Transações</button>
+                    <button class="tab-btn" data-tab="orcamento">Orçamento</button>
+                    <button class="tab-btn" data-tab="relatorios">Relatórios</button>
+                </div>
+
+                <!-- Tab Dashboard -->
+                <div class="tab-content active" id="dashboard">
+                    <div class="dashboard-grid">
+                        <div class="chart-container">
+                            <div class="chart-card">
+                                <h3><i class="fas fa-chart-pie"></i> Gastos por Categoria</h3>
+                                <canvas id="pieChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="budget-progress">
+                            <div class="chart-card">
+                                <h3><i class="fas fa-target"></i> Progresso do Orçamento</h3>
+                                <div id="budget-progress-list"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="recent-transactions">
+                        <div class="chart-card">
+                            <h3>Transações Recentes</h3>
+                            <div id="recent-transactions-list"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Transações -->
+                <div class="tab-content" id="transacoes">
+                    <div class="transactions-grid">
+                        <div class="transactions-section">
+                            <div class="chart-card">
+                                <div class="section-header">
+                                    <div>
+                                        <h3 class="receitas-title">Receitas</h3>
+                                        <p class="section-total" id="receitas-total">Total: R$ 0,00</p>
+                                    </div>
+                                    <button class="btn btn-success" onclick="openModal('receita')">
+                                        <i class="fas fa-plus"></i> Adicionar
+                                    </button>
+                                </div>
+                                <div id="receitas-list" class="transactions-list"></div>
+                            </div>
+                        </div>
+
+                        <div class="transactions-section">
+                            <div class="chart-card">
+                                <div class="section-header">
+                                    <div>
+                                        <h3 class="despesas-title">Despesas</h3>
+                                        <p class="section-total" id="despesas-total">Total: R$ 0,00</p>
+                                    </div>
+                                    <button class="btn btn-danger" onclick="openModal('despesa')">
+                                        <i class="fas fa-plus"></i> Adicionar
+                                    </button>
+                                </div>
+                                <div id="despesas-list" class="transactions-list"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Orçamento -->
+                <div class="tab-content" id="orcamento">
+                    <div class="chart-card">
+                        <h3>Controle de Orçamento</h3>
+                        <p class="section-description">Defina limites de gastos por categoria e acompanhe seu progresso</p>
+                        <div id="budget-categories" class="budget-grid"></div>
+                    </div>
+                </div>
+
+                <!-- Tab Relatórios -->
+                <div class="tab-content" id="relatorios">
+                    <div class="reports-grid">
+                        <div class="chart-container">
+                            <div class="chart-card">
+                                <h3>Orçado vs Realizado</h3>
+                                <canvas id="barChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="summary-report">
+                            <div class="chart-card">
+                                <h3>Resumo Financeiro</h3>
+                                <div id="financial-summary"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modal para Adicionar Transações -->
+    <div id="transactionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Nova Transação</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="transactionForm">
+                    <div class="form-group">
+                        <label for="descricao">Descrição</label>
+                        <input type="text" id="descricao" name="descricao" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="valor">Valor</label>
+                        <input type="number" id="valor" name="valor" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="categoria">Categoria</label>
+                        <select id="categoria" name="categoria" required>
+                            <!-- Opções serão preenchidas dinamicamente -->
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" id="submit-btn">Adicionar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Editar Orçamento -->
+    <div id="budgetModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Editar Orçamento</h3>
+                <button class="close-btn" onclick="closeBudgetModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="budgetForm">
+                    <div class="form-group">
+                        <label for="budget-categoria">Categoria</label>
+                        <input type="text" id="budget-categoria" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="budget-valor">Valor do Orçamento</label>
+                        <input type="number" id="budget-valor" step="0.01" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeBudgetModal()">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Salvar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
