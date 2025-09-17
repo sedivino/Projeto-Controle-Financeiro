@@ -661,3 +661,51 @@ window.addEventListener('load', function() {
     switchTab('dashboard');
 });
 
+container.innerHTML = financeData.receitas.map(receita => `
+    <div class="transaction-item receita">
+        <div class="transaction-info">
+            <div class="transaction-details">
+                <h4>${receita.descricao}</h4>
+                <p>${receita.categoria}</p>
+            </div>
+        </div>
+        <div class="transaction-amount">
+            <div class="amount receita">${formatCurrency(receita.valor)}</div>
+            <div class="date">${formatDate(receita.data)}</div>
+            <div class="actions">
+                <button class="btn btn-secondary btn-sm" onclick="editTransaction('receita', ${receita.id})">Editar</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteTransaction('receita', ${receita.id})">Excluir</button>
+            </div>
+        </div>
+    </div>
+`).join('');
+
+function editTransaction(type, id) {
+    currentTransactionType = type;
+    const transacoes = type === 'receita' ? financeData.receitas : financeData.despesas;
+    const transacao = transacoes.find(t => t.id === id);
+
+    if (!transacao) return;
+
+    // Abrir modal já preenchido
+    openModal(type);
+    document.getElementById('descricao').value = transacao.descricao;
+    document.getElementById('valor').value = transacao.valor;
+    document.getElementById('categoria').value = transacao.categoria;
+
+    // Guardar ID em edição
+    document.getElementById('transactionForm').dataset.editId = id;
+}
+
+function deleteTransaction(type, id) {
+    if (!confirm("Tem certeza que deseja excluir esta transação?")) return;
+
+    if (type === 'receita') {
+        financeData.receitas = financeData.receitas.filter(t => t.id !== id);
+    } else {
+        financeData.despesas = financeData.despesas.filter(t => t.id !== id);
+    }
+
+    saveData();
+    updateAllViews();
+}
